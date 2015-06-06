@@ -100,7 +100,7 @@ def get_auth_token():
     credentials = storage.get()
     if credentials is None or credentials.invalid:
         if args.non_interactive:
-            sys.stderr.write('ERROR: Invalid or missing Oauth2 credentials. To reset auth flow manually, run without --non-interactive\n')
+            sys.stderr.write('ERROR: Invalid or missing Oauth2 credentials. To reset auth flow manually, run without --non_interactive\n')
             sys.exit(1)
         else:
             credentials = tools.run_flow(flow, storage, args)
