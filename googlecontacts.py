@@ -49,10 +49,11 @@ parent_parsers = [tools.argparser]
 parser = argparse.ArgumentParser(parents=parent_parsers)
 parser.add_argument("--allgroups", help="only works in combination with --group to show members with multiple groups", action="store_true", default=False)
 parser.add_argument("--anygroup", help="show members of any user-created group (not My Contacts), OVERRIDES other options", action="store_true", default=False)
-parser.add_argument("--asterisk", help="send commands to Asterisk instead of printing to console", action='store_true', default=False)
+parser.add_argument("--asterisk", help="send commands to Asterisk instead of printing to console", action="store_true", default=False)
 parser.add_argument("--dbname", help="database tree to use")
-parser.add_argument("--delete", help="delete the existing database first", action='store_true', default=False)
-parser.add_argument('--group', action="append", help='group name, can use multiple times')
+parser.add_argument("--delete", help="delete the existing database first", action="store_true", default=False)
+parser.add_argument("--group", action="append", help="group name, can use multiple times")
+parser.add_argument("--non_interactive", help="abort script if credentials are missing or invalid", action="store_true", default=False)
 args = parser.parse_args()
 
 
@@ -98,7 +99,11 @@ def get_auth_token():
     storage = file.Storage(filename)
     credentials = storage.get()
     if credentials is None or credentials.invalid:
-        credentials = tools.run_flow(flow, storage, args)
+        if args.non_interactive:
+            sys.stderr.write('ERROR: Invalid or missing Oauth2 credentials. To reset auth flow manually, run without --non-interactive\n')
+            sys.exit(1)
+        else:
+            credentials = tools.run_flow(flow, storage, args)
 
     j = json.loads(open(filename).read())
 
