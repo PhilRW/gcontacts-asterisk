@@ -4,6 +4,7 @@
 # Updated By: Jay Schulman
 # Email: info@jayschulman.com
 # Updated Again By: Philip Rosenberg-Watt
+# And a little again by: Vicente Monroig (vmonroig@digitaldisseny.com)
 # Purpose: syncs contacts from google to asterisk server
 # Updates: Updating for Google API v3 with support for Google Apps
 #          OAuth2 auth flow and tokens
@@ -36,6 +37,7 @@ import gdata.contacts
 import gdata.contacts.client
 import gdata.contacts.data
 import argparse
+import unicodedata
 from oauth2client import client
 from oauth2client import file
 from oauth2client import tools
@@ -54,6 +56,7 @@ parser.add_argument("--dbname", help="database tree to use")
 parser.add_argument("--delete", help="delete the existing database first", action="store_true", default=False)
 parser.add_argument("--group", action="append", help="group name, can use multiple times")
 parser.add_argument("--non_interactive", help="abort script if credentials are missing or invalid", action="store_true", default=False)
+parser.add_argument("--ascii", help="remove all non-ascii characters from names", action="store_true", default=False)
 args = parser.parse_args()
 
 
@@ -183,6 +186,10 @@ def main():
 
             name = name.replace('\'','')
             name = name.replace('"','')
+
+            if args.ascii:
+                if not isinstance(name, bytes):
+                    name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore')
 
             if args.anygroup:
                 if (("My Contacts" in glist and len(glist) > 1) or
