@@ -57,6 +57,7 @@ parser.add_argument("--delete", help="delete the existing database first", actio
 parser.add_argument("--group", action="append", help="group name, can use multiple times")
 parser.add_argument("--non_interactive", help="abort script if credentials are missing or invalid", action="store_true", default=False)
 parser.add_argument("--ascii", help="remove all non-ascii characters from names", action="store_true", default=False)
+parser.add_argument("--add_type", help="append ' - type' to name entry", action="store_true", default=False)
 args = parser.parse_args()
 
 
@@ -176,7 +177,7 @@ def main():
 #             phone.text = re.sub('[^0-9]', '', phone.text)
             phone.text = unicode(phone.text, 'utf8')
             phone.text = phone_translate(phone.text)
- 
+
             # Remove leading digit if it exists, we will add this again later for all numbers
             # Only if a country code is defined.
             if country_code != "":
@@ -187,25 +188,36 @@ def main():
             name = name.replace('\'','')
             name = name.replace('"','')
 
+            suffix = ""
+
+            if phone.rel is not None:
+                rel = phone.rel.split("#")
+
+                if args.add_type:
+                    suffix = " - " + rel[-1]
+
             if args.ascii:
                 if not isinstance(name, bytes):
                     name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore')
+                if not isinstance(suffix, bytes):
+                    suffix = unicodedata.normalize('NFKD', suffix).encode('ascii', 'ignore')
+
 
             if args.anygroup:
                 if (("My Contacts" in glist and len(glist) > 1) or
                     ("My Contacts" not in glist and len(glist) > 0)):
-                    add_to_asterisk(args.dbname, phone.text, name)
+                    add_to_asterisk(args.dbname, phone.text, name + suffix)
             else:
                 if args.group:
                     if args.allgroups:
                         if set(args.group).issubset(glist):
-                            add_to_asterisk(args.dbname, phone.text, name)
+                            add_to_asterisk(args.dbname, phone.text, name + suffix)
                     else:
                         for g in args.group:
                             if g in glist:
-                                add_to_asterisk(args.dbname, phone.text, name)
+                                add_to_asterisk(args.dbname, phone.text, name + suffix)
                 else:
-                    add_to_asterisk(args.dbname, phone.text, name)
+                    add_to_asterisk(args.dbname, phone.text, name + suffix)
 
  
 if __name__ == '__main__':
