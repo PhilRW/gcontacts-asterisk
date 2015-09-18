@@ -173,6 +173,12 @@ def main():
                 break
 
         for phone in entry.phone_number:
+
+            if phone.text is None:
+                print "ERROR: The following entry has no phone.text value:"
+                print entry
+                exit(1)
+
             # Strip out any non numeric characters and convert to UTF-8
 #             phone.text = re.sub('[^0-9]', '', phone.text)
             phone.text = unicode(phone.text, 'utf8')
