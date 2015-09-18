@@ -185,6 +185,12 @@ def main():
             
             phone.text = country_code + phone.text
 
+            if name is None:
+                print "ERROR: The following entry has no way to determine a name:"
+                print entry
+                print "Please fix or remove this entry and re-run the script."
+                exit(1)
+
             name = name.replace('\'','')
             name = name.replace('"','')
 
