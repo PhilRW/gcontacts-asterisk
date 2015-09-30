@@ -175,8 +175,8 @@ def main():
         for phone in entry.phone_number:
 
             if phone.text is None:
-                print "ERROR: The following entry has no phone.text value:"
-                print entry
+                sys.stderr.write("ERROR: The following entry has no phone.text value:\n")
+                sys.stderr.write(str(entry) + "\n")
                 exit(1)
 
             # Strip out any non numeric characters and convert to UTF-8
@@ -192,10 +192,10 @@ def main():
             phone.text = country_code + phone.text
 
             if name is None:
-                print "ERROR: The following entry has no way to determine a name:"
-                print entry
-                print "Please fix or remove this entry and re-run the script."
-                exit(1)
+                sys.stderr.write("ERROR: The following entry has no way to determine a name:\n")
+                sys.stderr.write(str(entry) + "\n")
+                sys.stderr.write("Please fix this entry and re-run the script.\n")
+                break
 
             name = name.replace('\'','')
             name = name.replace('"','')
