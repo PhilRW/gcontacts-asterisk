@@ -177,6 +177,7 @@ def main():
             if phone.text is None:
                 sys.stderr.write("ERROR: The following entry has no phone.text value:\n")
                 sys.stderr.write(str(entry) + "\n")
+                sys.stderr.write("The script is unable to proceed without a phone number.")
                 exit(1)
 
             # Strip out any non numeric characters and convert to UTF-8
