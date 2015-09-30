@@ -181,7 +181,7 @@ def main():
 
             # Strip out any non numeric characters and convert to UTF-8
 #             phone.text = re.sub('[^0-9]', '', phone.text)
-            phone.text = unicode(phone.text, 'utf8')
+            phone.text = phone.text.encode('utf-8')
             phone.text = phone_translate(phone.text)
 
             # Remove leading digit if it exists, we will add this again later for all numbers
